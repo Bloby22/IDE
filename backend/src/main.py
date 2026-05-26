@@ -8,7 +8,7 @@ from api.lsp import router as lsp_router
 from api.git import router as git_router
 
 app = FastAPI(
-    title="BlobIDE",
+    title="CloudIDE",
     version="0.1.0",
     description="Custom IDE backend",
 )
@@ -34,7 +34,7 @@ app.include_router(git_router, prefix="/api/git", tags=["git"])
 
 @app.get("/health", tags=["meta"])
 async def health() -> dict:
-    return {"status": "ok", "app": "BlobIDE", "version": "0.1.0"}
+    return {"status": "ok", "app": "CloudIDE", "version": "0.1.0"}
 
 
 if __name__ == "__main__":

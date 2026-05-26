@@ -43,7 +43,7 @@ export default function EditorPane({ tabs, activeTab, onSelectTab, onCloseTab, o
       <div className="editor-pane editor-pane--empty">
         <div className="editor-empty">
           <div className="editor-empty__logo">⬡</div>
-          <div className="editor-empty__title">BlobIDE</div>
+          <div className="editor-empty__title">CloudIDE</div>
           <div className="editor-empty__hint">Open a file from the explorer</div>
         </div>
       </div>

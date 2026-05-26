@@ -49,7 +49,7 @@ async def diagnostics(req: DiagnosticsRequest) -> list[Diagnostic]:
     results: list[Diagnostic] = []
 
     if req.language == "python":
-        tmp = Path("/tmp/_blobide_lint.py")
+        tmp = Path("/tmp/_cloudide_lint.py")
         tmp.write_text(req.content, encoding="utf-8")
         stdout, _, _ = await run(["python", "-m", "py_compile", str(tmp)])
         _, stderr, _ = await run(["python", "-m", "py_compile", str(tmp)])
@@ -61,7 +61,7 @@ async def diagnostics(req: DiagnosticsRequest) -> list[Diagnostic]:
                 results.append(Diagnostic(line=ln, col=1, severity="error", message=line.strip()))
 
     if req.language in ("typescript", "javascript"):
-        tmp = Path(f"/tmp/_blobide_lint.{'ts' if req.language == 'typescript' else 'js'}")
+        tmp = Path(f"/tmp/_cloudide_lint.{'ts' if req.language == 'typescript' else 'js'}")
         tmp.write_text(req.content, encoding="utf-8")
         _, stderr, _ = await run(["npx", "--yes", "tsc", "--noEmit", "--strict", str(tmp)])
         for line in stderr.splitlines():

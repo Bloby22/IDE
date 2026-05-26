@@ -19,7 +19,7 @@ export default function StatusBar({ file, onToggleTerminal }: Props) {
   return (
     <div className="status-bar">
       <div className="status-bar__left">
-        <span className="status-item status-item--brand">⬡ BlobIDE</span>
+        <span className="status-item status-item--brand">⬡ CloudIDE</span>
         {file && (
           <>
             <span className="status-sep">›</span>
