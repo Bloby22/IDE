@@ -8,46 +8,42 @@ import Terminal from "./components/Terminal"
 export type Panel = "explorer" | "search" | "git" | "extensions"
 
 export interface FileTab {
-    id: string
-    name: string
-    path: string
-    content: string
-    language: string
-    dirty: boolean
+  id: string
+  name: string
+  path: string
+  content: string
+  language: string
+  dirty: boolean
 }
 
 export default function App() {
-    const [activePanel, setActivePanel] = useState<Panel>("explorer")
-    const [tabs, setTabs] = useState<FileTab[]>([])
-    const [activeTab, setActiveTab] = useState<string>("")
-    const [terminalOpen, setTerminalOpen] = useState(false)
-    const [sidebarOpen, setSidebarOpen] = useState(true)
-    
-    // Close
-    const closeTab = (id: string) => {
-        const next = tabs.filter((t) => t.id !== id)
-        setTabs(next)
-        if (activeTab == id) setActiveTab(next[next.length - 1]?.id ?? "")
-    }
+  const [activePanel, setActivePanel] = useState<Panel>("explorer")
+  const [tabs, setTabs] = useState<FileTab[]>([])
+  const [activeTab, setActiveTab] = useState<string>("")
+  const [terminalOpen, setTerminalOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
 
-    // Update file
-    const updateContent = (id: string, content: string) => {
-        setTabs((prev) =>
-            prev.map((t) => (t.id === id ? { ...t, content, dirty: true} : t))
-        )
-    }
+  const closeTab = (id: string) => {
+    const next = tabs.filter((t) => t.id !== id)
+    setTabs(next)
+    if (activeTab === id) setActiveTab(next[next.length - 1]?.id ?? "")
+  }
 
-    // Open
-    const openFile = (file: FileTab) => {
-        const exists = tabs.find((t) => t.id === file.id)
-        if (!exists) setTabs((prev) => [...prev, file])
-        setActiveTab(file.id)
-    }
+  const updateContent = (id: string, content: string) => {
+    setTabs((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, content, dirty: true } : t))
+    )
+  }
 
-    // Now
-    const currentTab = tabs.find((t) => t.id === activeTab)
+  const openFile = (file: FileTab) => {
+    const exists = tabs.find((t) => t.id === file.id)
+    if (!exists) setTabs((prev) => [...prev, file])
+    setActiveTab(file.id)
+  }
 
-    return (
+  const currentTab = tabs.find((t) => t.id === activeTab)
+
+  return (
     <div className="ide-root">
       <ActivityBar
         active={activePanel}

@@ -1,49 +1,31 @@
-import type { Panel } from "@/App";
-import { Folder, Search, GitBranch, Puzzle, Settings, X, Terminal, ChevronRight, ChevronDown, Circle, Files } from "lucide-react"
+import { Files, Search, GitBranch, Puzzle, Settings } from "lucide-react"
+import type { Panel } from "../App"
 
 const ICONS: { id: Panel; label: string; Icon: React.ElementType }[] = [
-    {
-        id: "explorer",
-        label: "Explorer",
-        Icon: Files
-    },
-    {
-        id: "search",
-        label: "Search",
-        Icon: Search
-    },
-    {
-        id: "git",
-        label: "Source Control",
-        Icon: GitBranch
-    },
-    {
-        id: "extensions",
-        label: "Extensions",
-        Icon: Puzzle
-    }
+  { id: "explorer",   label: "Explorer",       Icon: Files     },
+  { id: "search",     label: "Search",         Icon: Search    },
+  { id: "git",        label: "Source Control", Icon: GitBranch },
+  { id: "extensions", label: "Extensions",     Icon: Puzzle    },
 ]
 
 interface Props {
-    activate: Panel
-    onChange: (p: Panel) => void
-    sidebarOpen: boolean
-    onToggleSidebar: () => void
+  active: Panel
+  onChange: (p: Panel) => void
+  sidebarOpen: boolean
+  onToggleSidebar: () => void
 }
 
-export default function ActivityBar({
-    activate, onChange, sidebarOpen, onToggleSidebar
-}: Props) {
-    return (
+export default function ActivityBar({ active, onChange, sidebarOpen, onToggleSidebar }: Props) {
+  return (
     <div className="activity-bar">
       <div className="activity-bar__top">
         {ICONS.map(({ id, label, Icon }) => (
           <button
             key={id}
             title={label}
-            className={`activity-btn ${activate === id && sidebarOpen ? "active" : ""}`}
+            className={`activity-btn ${active === id && sidebarOpen ? "active" : ""}`}
             onClick={() => {
-              if (activate === id) onToggleSidebar()
+              if (active === id) onToggleSidebar()
               else { onChange(id); if (!sidebarOpen) onToggleSidebar() }
             }}
           >
@@ -57,5 +39,5 @@ export default function ActivityBar({
         </button>
       </div>
     </div>
-    )
+  )
 }
