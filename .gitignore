@@ -1,5 +1,33 @@
+<<<<<<< HEAD
 backend/.venv
 frontend/node_modules
 .vscode/
 .github/
 build/
+=======
+# Python
+backend/.venv/
+backend/__pycache__/
+backend/src/**/__pycache__/
+*.pyc
+*.pyo
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+
+# C++
+cpp/build/
+*.o
+*.a
+*.so
+*.dll
+
+# VS Code
+.vscode/settings.json
+
+# OS
+.DS_Store
+Thumbs.db
+>>>>>>> 9036f2e78d835ada51dff1008b6b61b2ba0235e1
