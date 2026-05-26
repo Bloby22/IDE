@@ -1,25 +1,52 @@
 import { useRef, useEffect, useState, useCallback } from "react"
 import type { FileTab } from "../App"
+import type { Diagnostic } from "./ProblemsPanel"
 import { tokenize } from "../utils/tokenizer"
 
 interface Props {
   file: FileTab
   onChange: (content: string) => void
+  onDiagnostics: (diags: Diagnostic[]) => void
 }
 
-export default function Editor({ file, onChange }: Props) {
+export default function Editor({ file, onChange, onDiagnostics }: Props) {
   const [lines, setLines] = useState(() => file.content.split("\n"))
   const [cursor, setCursor] = useState({ line: 0, col: 0 })
-  const [selection, setSelection] = useState<{ start: number; end: number } | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const scrollRef = useRef<HTMLDivElement>(null)
+  const lspTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Sync lines from textarea (native editing)
+  useEffect(() => {
+    setLines(file.content.split("\n"))
+    if (textareaRef.current) textareaRef.current.value = file.content
+  }, [file.content])
+
+  const runDiagnostics = useCallback((content: string) => {
+    if (lspTimer.current) clearTimeout(lspTimer.current)
+    lspTimer.current = setTimeout(async () => {
+      try {
+        const res = await fetch("http://localhost:8000/api/lsp/diagnostics", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            path: file.path,
+            content,
+            language: file.language,
+          }),
+        })
+        const data: Omit<Diagnostic, "file">[] = await res.json()
+        onDiagnostics(data.map((d) => ({ ...d, file: file.path })))
+      } catch {
+        onDiagnostics([])
+      }
+    }, 800)
+  }, [file.path, file.language, onDiagnostics])
+
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value
     setLines(val.split("\n"))
     onChange(val)
-  }, [onChange])
+    runDiagnostics(val)
+  }, [onChange, runDiagnostics])
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     const ta = e.currentTarget
@@ -33,8 +60,9 @@ export default function Editor({ file, onChange }: Props) {
       ta.selectionStart = ta.selectionEnd = start + 4
       setLines(newVal.split("\n"))
       onChange(newVal)
+      runDiagnostics(newVal)
     }
-  }, [onChange])
+  }, [onChange, runDiagnostics])
 
   const updateCursor = useCallback(() => {
     const ta = textareaRef.current
@@ -46,9 +74,8 @@ export default function Editor({ file, onChange }: Props) {
   }, [])
 
   return (
-    <div className="editor" ref={scrollRef}>
+    <div className="editor">
       <div className="editor__inner">
-        {/* Line numbers */}
         <div className="editor__gutter">
           {lines.map((_, i) => (
             <div
@@ -60,7 +87,6 @@ export default function Editor({ file, onChange }: Props) {
           ))}
         </div>
 
-        {/* Syntax-highlighted overlay */}
         <div className="editor__highlight" aria-hidden>
           {lines.map((line, i) => (
             <div key={i} className="editor__line">
@@ -69,7 +95,6 @@ export default function Editor({ file, onChange }: Props) {
           ))}
         </div>
 
-        {/* Actual textarea (transparent, on top) */}
         <textarea
           ref={textareaRef}
           className="editor__textarea"

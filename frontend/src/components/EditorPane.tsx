@@ -1,6 +1,7 @@
 import { useEffect } from "react"
 import { X } from "lucide-react"
 import type { FileTab } from "../App"
+import type { Diagnostic } from "./ProblemsPanel"
 import Editor from "./Editor"
 
 const LANG_ICON: Record<string, string> = {
@@ -23,9 +24,10 @@ interface Props {
   onSelectTab: (id: string) => void
   onCloseTab: (id: string) => void
   onChangeContent: (id: string, content: string) => void
+  onDiagnostics: (diags: Diagnostic[]) => void
 }
 
-export default function EditorPane({ tabs, activeTab, onSelectTab, onCloseTab, onChangeContent }: Props) {
+export default function EditorPane({ tabs, activeTab, onSelectTab, onCloseTab, onChangeContent, onDiagnostics }: Props) {
   const currentTab = tabs.find((t) => t.id === activeTab)
 
   useEffect(() => {
@@ -84,6 +86,7 @@ export default function EditorPane({ tabs, activeTab, onSelectTab, onCloseTab, o
           key={currentTab.id}
           file={currentTab}
           onChange={(content) => onChangeContent(currentTab.id, content)}
+          onDiagnostics={onDiagnostics}
         />
       )}
     </div>
